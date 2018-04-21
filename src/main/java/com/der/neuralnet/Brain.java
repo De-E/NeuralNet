@@ -26,54 +26,111 @@ import java.util.ArrayList;
  */
 public class Brain
 {
-    private final static float LEARNING_RATE = 0.05f;
+    private float LEARNING_RATE = 0.05f;
     
-    private ArrayList<Node> input = new ArrayList<>();
-    private ArrayList<Node> output = new ArrayList<>();
-    private ArrayList<Node> hidden = new ArrayList<>();
+    private ArrayList<Node> inputNode = new ArrayList<>();
+    private ArrayList<Node> outputNode = new ArrayList<>();
+    private ArrayList<Node> hiddenNode = new ArrayList<>();
     
     public Brain(int input, int output, int hidden)
     {
+        int j = 0;
         for (int i=0; i<input; i++)
         {
-            this.input.add(new Node());
+            this.inputNode.add(new Node());
+            this.inputNode.get(this.inputNode.size()-1).id = j;
+            j++;
         }
         for (int i=0; i<output; i++)
         {
-            this.output.add(new Node());
+            this.outputNode.add(new Node());
+            this.outputNode.get(this.outputNode.size()-1).id = j;
+            j++;
         }
         for (int i=0; i<hidden; i++)
         {
-            this.hidden.add(new Node());
+            this.hiddenNode.add(new Node());
+            this.hiddenNode.get(this.hiddenNode.size()-1).id = j;
+            j++;
         }
         this.createEdges();
     }
     
+    /**
+     * This function create connection between nodes
+     */
     private void createEdges()
     {
-        if(this.hidden.size()!=0)
+        if(this.hiddenNode.size()!=0)
         {
-            for(int i=0; i<this.input.size(); i++)
+            for(int i=0; i<this.inputNode.size(); i++)
             {
-                for(int j=0; j<this.hidden.size(); j++)
+                for(int j=0; j<this.hiddenNode.size(); j++)
                 {
-                    this.input.get(i).addNext(this.hidden.get(j));
+                    this.inputNode.get(i).addNext(this.hiddenNode.get(j));
                 }
             }
-            for(int i=0; i<this.hidden.size(); i++)
+            for(int i=0; i<this.hiddenNode.size(); i++)
             {
-                for(int j=0; j<this.output.size(); j++)
+                for(int j=0; j<this.outputNode.size(); j++)
                 {
-                    this.hidden.get(i).addNext(this.output.get(j));
+                    this.hiddenNode.get(i).addNext(this.outputNode.get(j));
                 }
             }
         }else{
-            for(int i=0; i<this.input.size(); i++)
+            for(int i=0; i<this.inputNode.size(); i++)
             {
-                for(int j=0; j<this.output.size(); j++)
+                for(int j=0; j<this.outputNode.size(); j++)
                 {
-                    this.input.get(i).addNext(this.output.get(j));
+                    this.inputNode.get(i).addNext(this.outputNode.get(j));
                 }
+            }
+        }
+    }
+    
+    public void changeLearningRate(float learningRate)
+    {
+        this.LEARNING_RATE = learningRate;
+    }
+    
+    public void input(ArrayList<Float> inputValues)
+    {
+        for(int i=0; i<this.inputNode.size(); i++)
+        {
+            this.inputNode.get(i).input = new ArrayList<>();
+            this.inputNode.get(i).input.add(inputValues.get(i));
+        }
+    }
+    
+    public void run()
+    {
+        for(Node n : this.inputNode)
+        {
+            n.forward();
+        }
+        for(Node n : this.hiddenNode)
+        {
+            n.forward();
+        }
+    }
+    
+    public ArrayList<Float> output()
+    {
+        ArrayList<Float> o = new ArrayList<>();
+        for(Node n : this.outputNode)
+        {
+            o.add(n.out());
+        }
+        return o;
+    }
+    
+    public void wrong(float error)
+    {
+        for(Node n : this.inputNode)
+        {
+            for(int i=0; i<n.weightNext.size(); i++)
+            {
+                //n.waight.get(i) = this.LEARNING_RATE*error*;
             }
         }
     }

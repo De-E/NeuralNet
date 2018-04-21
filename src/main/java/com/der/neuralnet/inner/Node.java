@@ -18,6 +18,7 @@
 package com.der.neuralnet.inner;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  *
@@ -25,45 +26,47 @@ import java.util.ArrayList;
  */
 public class Node
 {
+    public int id = 0;
     //output operation
-    private ArrayList<Node> next = new ArrayList<>();
-    private ArrayList<Float> waight = new ArrayList<>();
+    public ArrayList<Node> next = new ArrayList<>();
+    public ArrayList<Float> weightNext = new ArrayList<>();
+    public Float value = 0f;
     //input operation
-    private float value = 0.0f;
-    private ArrayList<Float> input = new ArrayList<>();
+    public ArrayList<Float> input = new ArrayList<>();
+    public ArrayList<Float> backWeight = new ArrayList<>();
+    //memory operation
+    public Float oldValue = 0f;
     
     public void addNext(Node n)
     {
+        Random random = new Random();
+        
         this.next.add(n);
-        this.waight.add(1f);
-    }
-    
-    public float getNextWaight(int i)
-    {
-        return this.waight.get(i);
-    }
-    
-    public void setNextWaight(int i, float value)
-    {
-        this.waight.set(i, value);
-    }
-    
-    public void insert(float f)
-    {
-        this.input.add(f);
+        this.weightNext.add(random.nextFloat());
     }
     
     public void forward()
     {
-        this.value=0f;
-        for(Float f : this.input)
-        {
-            this.value += f;
-        }
+        this.value = this.out();
         for(int i=0; i<this.next.size(); i++)
         {
-            Node n = this.next.get(i);
-            n.insert(this.value*this.waight.get(i));
+            this.next.get(i).input.add(this.value*this.weightNext.get(i));
         }
+        this.oldValue = this.value;
+        this.value=0f;
+    }
+    
+    public float out()
+    {
+        float ret = 0f;
+        for(Float f : this.input)
+        {
+            ret += f;
+        }
+        /**
+         * Clean input array, else it every run duplicate the input
+         */
+        this.input = new ArrayList<>();
+        return ret;
     }
 }
