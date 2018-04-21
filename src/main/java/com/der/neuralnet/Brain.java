@@ -124,14 +124,64 @@ public class Brain
         return o;
     }
     
-    public void wrong(float error)
+    /**
+     * Adjust weight on error.
+     * @param error Correct value - obrained value
+     */
+    public void wrong(Float error)
     {
-        for(Node n : this.inputNode)
+        for(Node n : this.outputNode)
         {
-            for(int i=0; i<n.weightNext.size(); i++)
+            ArrayList<Node> priors = this.findBackNode(n);
+            for (Node prior : priors)
             {
-                //n.waight.get(i) = this.LEARNING_RATE*error*;
+                int i = this.getIntOfWeight(n, prior);
+                Float newWeight = this.LEARNING_RATE*error*prior.oldValue+prior.weightNext.get(i);
+                prior.weightNext.set(i, newWeight);
             }
         }
+    }
+    
+    /**
+     * Return prior node in flow.
+     * @param node to get priors
+     * @return list of priors
+     */
+    private ArrayList<Node> findBackNode(Node node)
+    {
+        ArrayList<Node> ret = new ArrayList<>();
+        for(Node n : this.hiddenNode)
+        {
+            if(n.id==node.id)
+            {
+                ret.add(n);
+            }
+        }
+        for(Node n : this.inputNode)
+        {
+            if(n.id==node.id)
+            {
+                ret.add(n);
+            }
+        }
+        return ret;
+    }
+    
+    private void wrongOnNode(Float error, Node node)
+    {
+        
+    }
+    
+    private Integer getIntOfWeight(Node node, Node prior)
+    {
+        for(int i=0; i<prior.next.size(); i++)
+        {
+            Node priorNext = prior.next.get(i);
+            if(priorNext.id == node.id)
+            {
+                return i;
+            }
+        }
+        return null;
     }
 }
