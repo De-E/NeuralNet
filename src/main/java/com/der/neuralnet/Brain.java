@@ -136,8 +136,8 @@ public class Brain
             for (Node prior : priors)
             {
                 int i = this.getIntOfWeight(n, prior);
-                Float newWeight = this.LEARNING_RATE*error*prior.oldValue+prior.weightNext.get(i);
-                prior.weightNext.set(i, newWeight);
+                Float newWeight = this.LEARNING_RATE*error*prior.oldValue+prior.weightNextNodes.get(i);
+                prior.weightNextNodes.set(i, newWeight);
             }
         }
     }
@@ -152,16 +152,22 @@ public class Brain
         ArrayList<Node> ret = new ArrayList<>();
         for(Node n : this.hiddenNode)
         {
-            if(n.id==node.id)
+            for(Node nextNode : n.nextNodes)
             {
-                ret.add(n);
+                if(nextNode.id==node.id)
+                {
+                    ret.add(n);
+                }
             }
         }
         for(Node n : this.inputNode)
         {
-            if(n.id==node.id)
+            for(Node nextNode : n.nextNodes)
             {
-                ret.add(n);
+                if(nextNode.id==node.id)
+                {
+                    ret.add(n);
+                }
             }
         }
         return ret;
@@ -174,14 +180,28 @@ public class Brain
     
     private Integer getIntOfWeight(Node node, Node prior)
     {
-        for(int i=0; i<prior.next.size(); i++)
+        for(int i=0; i<prior.nextNodes.size(); i++)
         {
-            Node priorNext = prior.next.get(i);
+            Node priorNext = prior.nextNodes.get(i);
             if(priorNext.id == node.id)
             {
                 return i;
             }
         }
         return null;
+    }
+    
+    public String printWeightDebug()
+    {
+        String ret = "";
+        
+        for(Node n : this.inputNode)
+        {
+            for(Float f : n.weightNextNodes)
+                ret += f + " ";
+            ret += "\n";
+        }
+        
+        return ret;
     }
 }

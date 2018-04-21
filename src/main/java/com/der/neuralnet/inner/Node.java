@@ -28,8 +28,8 @@ public class Node
 {
     public int id = 0;
     //output operation
-    public ArrayList<Node> next = new ArrayList<>();
-    public ArrayList<Float> weightNext = new ArrayList<>();
+    public ArrayList<Node> nextNodes = new ArrayList<>();
+    public ArrayList<Float> weightNextNodes = new ArrayList<>();
     public Float value = 0f;
     //input operation
     public ArrayList<Float> input = new ArrayList<>();
@@ -41,16 +41,16 @@ public class Node
     {
         Random random = new Random();
         
-        this.next.add(n);
-        this.weightNext.add(random.nextFloat());
+        this.nextNodes.add(n);
+        this.weightNextNodes.add(random.nextFloat());
     }
     
     public void forward()
     {
         this.value = this.out();
-        for(int i=0; i<this.next.size(); i++)
+        for(int i=0; i<this.nextNodes.size(); i++)
         {
-            this.next.get(i).input.add(this.value*this.weightNext.get(i));
+            this.nextNodes.get(i).input.add(this.value*this.weightNextNodes.get(i));
         }
         this.oldValue = this.value;
         this.value=0f;
