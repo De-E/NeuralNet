@@ -126,18 +126,21 @@ public class Brain
     
     /**
      * Adjust weight on error.
-     * @param error Correct value - obrained value
+     * @param errors Correct value - obtained value in a vector. The size must
+     * be the same of the output node and ordered like this nodes.
      */
-    public void wrong(Float error)
+    public void wrong(ArrayList<Float> errors)
     {
-        for(Node n : this.outputNode)
+        for(int i=0; i<this.outputNode.size(); i++)
         {
-            ArrayList<Node> priors = this.findBackNode(n);
-            for (Node prior : priors)
+            Node node = this.outputNode.get(i);
+            ArrayList<Node> priors = this.findBackNode(node);
+            for(int j=0; j< priors.size(); j++)
             {
-                int i = this.getIntOfWeight(n, prior);
-                Float newWeight = this.LEARNING_RATE*error*prior.oldValue+prior.weightNextNodes.get(i);
-                prior.weightNextNodes.set(i, newWeight);
+                Node prior = priors.get(j);
+                int k = this.getIntOfWeight(node, prior);
+                Float newWeight = this.LEARNING_RATE*errors.get(i)*prior.oldValue+prior.weightNextNodes.get(k);
+                prior.weightNextNodes.set(k, newWeight);
             }
         }
     }
@@ -194,14 +197,14 @@ public class Brain
     public String printWeightDebug()
     {
         String ret = "";
-        
+        ret += "<------>\n";
         for(Node n : this.inputNode)
         {
             for(Float f : n.weightNextNodes)
                 ret += f + " ";
             ret += "\n";
         }
-        
+        ret += "<------>\n";
         return ret;
     }
 }
