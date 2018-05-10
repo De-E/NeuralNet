@@ -129,7 +129,7 @@ public class Brain
      * @param errors Correct value - obtained value in a vector. The size must
      * be the same of the output node and ordered like this nodes.
      */
-    public void wrong(ArrayList<Float> errors)
+    private void wrong(ArrayList<Float> errors)
     {
         for(int i=0; i<this.outputNode.size(); i++)
         {
@@ -194,7 +194,7 @@ public class Brain
         return null;
     }
     
-    public String printWeightDebug()
+    private String dPrintWeight()
     {
         String ret = "";
         ret += "<------>\n";
@@ -206,5 +206,92 @@ public class Brain
         }
         ret += "<------>\n";
         return ret;
+    }
+    
+    private ArrayList<ArrayList<Float>> dMatrixWeight()
+    {
+        ArrayList<ArrayList<Float>> matrix = new ArrayList<>();
+        for(Node n : this.inputNode)
+        {
+            matrix.add(n.weightNextNodes);
+        }
+        return matrix;
+    }
+    
+    /**
+     * Starts neural net learning, the function finish when the net has learned.
+     * @param inputGiven input to learn
+     * @param outputExpected autput expected
+     * @param tollerance tollerance on values
+     */
+    public void learn(ArrayList<Float> inputGiven, ArrayList<Float> outputExpected, Float tollerance)
+    {
+        this.input(inputGiven);
+        boolean learning = true;
+        ArrayList<Float> output = null;
+        while(learning)
+        {
+            this.run();
+            output = this.output();
+            learning = this.arrayListAreUgual(outputExpected, output, tollerance);
+            if(!learning)
+            {
+                this.wrong(this.errorCalculate(output, outputExpected, tollerance));
+                System.err.println(this.dPrintWeight());
+            }
+            this.input(inputGiven);
+            
+        }
+    }
+    
+    /**
+     * Get true if the two arrays have the same value
+     * @param alfa first array
+     * @param beta second array
+     * @param t tollerance
+     * @return boolean
+     */
+    private boolean arrayListAreUgual(ArrayList<Float> alfa, ArrayList<Float> beta, Float t)
+    {
+        if(alfa.size() == beta.size())
+        {
+            for(int i=0; i<alfa.size(); i++)
+            {
+                if(!((alfa.get(i)>(beta.get(i)-t)) && (alfa.get(i)<(beta.get(i)+t))))
+                {
+                    return false;
+                }
+            }
+        }else{
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Calculate the error on each output node.
+     * @param input input array
+     * @param output output array expected
+     * @param t tollerance
+     * @return Array of erros.
+     */
+    private ArrayList<Float> errorCalculate(ArrayList<Float> input, ArrayList<Float> output, Float t)
+    {
+        ArrayList<Float> error = new ArrayList<>();
+        if(input.size() == output.size())
+        {
+            for(int i=0; i<input.size(); i++)
+            {
+                if((input.get(i)>(output.get(i)-t)) && (input.get(i)<(output.get(i)+t)))
+                {
+                    error.add(0f);
+                }else{
+                    error.add(output.get(i) - input.get(i));
+                }
+            }
+        }
+        
+        return error;
     }
 }

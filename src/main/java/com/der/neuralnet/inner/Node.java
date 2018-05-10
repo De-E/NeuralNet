@@ -33,7 +33,6 @@ public class Node
     public Float value = 0f;
     //input operation
     public ArrayList<Float> input = new ArrayList<>();
-    public ArrayList<Float> backWeight = new ArrayList<>();
     //memory operation
     public Float oldValue = 0f;
     
